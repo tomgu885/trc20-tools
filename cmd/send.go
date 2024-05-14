@@ -36,19 +36,19 @@ func Send(mnemonic, to, amount string, idx int) (txID string, err error) {
 
 	fmt.Printf("from: %s\n", from)
 
-	if trxBalance < 20_000_000 { // 小于 20 TRX
+	if trxBalance < 30_000_000 { // 小于 20 TRX
 		// 查询主账号的 TRX 余额
 		if 0 == idx {
 			err = errors.New("主账号也没有 TRX")
 			return
 		}
-		fmt.Printf("%s TRX 不足，从主账号转 20 TRX过去...\n")
-		blockNum, trxID, errTrx := tron.SendTrx(mnemonic, 0, from, "20")
+		fmt.Printf("%s TRX 不足，从主账号转 50 TRX过去...\n", from)
+		blockNum, trxID, errTrx := tron.SendTrx(mnemonic, 0, from, "50")
 		if errTrx != nil {
 			err = errors.New("TRX加油失败")
 			return
 		}
-		fmt.Printf("trx 加油: txID:%s @ block: %d %s\n", trxID, blockNum)
+		fmt.Printf("trx 加油: txID:%s @ block: %d\n", trxID, blockNum)
 		fmt.Println("等待5秒钟")
 		time.Sleep(5 * time.Second)
 	}

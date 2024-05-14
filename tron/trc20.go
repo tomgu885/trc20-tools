@@ -62,7 +62,7 @@ func SendTrx(mnemonic string, idx int, to, amount string) (blockNumber int64, tx
 }
 
 func SendTrc20(mnemonic string, idx int, to, amount string) (txID string, err error) {
-	feeLimit := int64(1000_000_000)
+	feeLimit := int64(50_000_000)
 	amountInt, err := String2int64(amount)
 	if err != nil {
 		return

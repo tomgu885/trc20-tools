@@ -19,7 +19,7 @@ func MnemonicPrompt(l *readline.Instance) {
 }
 
 func ModePrompt(l *readline.Instance) {
-	fmt.Println("输入你要进行的操作 new 新助记词, gen 生成地址, query 查询余额, send 转账,  mn 输入新的助记词, env:环境 quit(ctrl+c) 退出:")
+	fmt.Println("输入你要进行的操作 new 新助记词, gen 地址列表, query 查询余额, send 转账,  mn 输入新的助记词, env:环境 quit(ctrl+c) 退出:")
 	l.SetPrompt("mode\u001B[31m»\u001B[0m ")
 }
 
@@ -32,4 +32,9 @@ func SetPrompt(mode string, l *readline.Instance) {
 		l.SetPrompt("address\u001B[31m»\u001B[0m ")
 
 	}
+}
+
+func SendPrompt(l *readline.Instance) {
+	fmt.Println("输入接收地址")
+	l.SetPrompt("address\u001B[31m»\u001B[0m ")
 }

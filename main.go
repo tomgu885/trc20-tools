@@ -28,7 +28,7 @@ func main() {
 
 	mnemmonic := ""
 	modes := []string{"gen", "query", "send", "help"}
-	env := "shasta"
+	env := "mainnet"
 	mode := ""
 	fromIndex := int(-1)
 	toAddr := ""
@@ -89,6 +89,7 @@ func main() {
 			cmd.MnemonicPrompt(l)
 			continue
 		case "gen" == line: // start of gen
+			mode = ""
 			if "" == mnemmonic {
 				fmt.Println("未输入助记词")
 				cmd.MnemonicPrompt(l)
@@ -101,7 +102,7 @@ func main() {
 			} else {
 				fmt.Println("生成的地址如下")
 				for idx, addr := range addresses {
-					fmt.Printf("%03d: %s\n", idx, addr)
+					fmt.Printf("%3d: %s\n", idx, addr)
 				}
 
 			}
@@ -109,6 +110,7 @@ func main() {
 			continue
 			// end of gen:
 		case "query" == line:
+			mode = ""
 			if "" == mnemmonic {
 				fmt.Println("未输入助记词")
 				cmd.ModePrompt(l)
@@ -120,7 +122,8 @@ func main() {
 				fmt.Println("发生错误:", errB.Error())
 				continue
 			}
-			fmt.Printf("id  地址\t\t\t\tTRX\t\t USDT\n")
+
+			fmt.Printf("id  地址\t\t\t\tTRX\t\t USDT \t| %d个地址有TRX或USDT\n", len(balances))
 			for _, balance := range balances {
 				fmt.Println(balance)
 			}
@@ -142,14 +145,12 @@ func main() {
 		case "" == mode: // no mode setted
 			fmt.Printf("\n")
 			cmd.MnemonicPrompt(l)
-
+			fromIndex = -1
+			toAddr = ""
+			amount = ""
+			continue
 		case mode == "send":
-			fmt.Println("line:", line)
-			fmt.Println("fromIndex:", fromIndex)
-			fmt.Println("toAddr:", toAddr)
-			fmt.Println("amount:", amount)
 			if "clear" == line {
-				mode = ""
 				fromIndex = -1
 				toAddr = ""
 				amount = ""
@@ -180,12 +181,24 @@ func main() {
 			if tron.IsNumeric(line) {
 				amount = line
 				from, _ := tron.AddressFromMnemonic(mnemmonic, fromIndex)
-				trc20balance, errB := tron.BalanceOfTrc20(from)
+				//trc20balance, errB := tron.BalanceOfTrc20(from)
+				enough, thisBalance, errB := tron.HasEnoughTrc20(from, amount)
 				if errB != nil {
 					fmt.Println("发生错误:", errB.Error())
 				}
+
+				if !enough {
+					fmt.Printf("%s (%s) 金额不足以转出(%s)，请重新输入\n", from, tron.BigToken2Usdt(thisBalance), amount)
+					mode = ""
+					fromIndex = -1
+					toAddr = ""
+					amount = ""
+					cmd.ModePrompt(l)
+					continue
+				}
+
 				amount = line
-				fmt.Printf("从 %s(余额 %s USDT) 转到 %s 金额 %s\n", from, tron.BigToken2Usdt(trc20balance), toAddr, amount)
+				fmt.Printf("从 %s(余额 %s USDT) 转到 %s 金额 %s\n", from, tron.BigToken2Usdt(thisBalance), toAddr, amount)
 				fmt.Println("输入 yes 或者 y 确认| 输入 clear 重新输入")
 				l.SetPrompt("\u001B[31m»\u001B[0m ")
 
