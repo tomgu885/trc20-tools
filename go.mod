@@ -9,6 +9,8 @@ require (
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/tyler-smith/go-bip39 v1.1.0
 	github.com/weibi/tron-protocol v0.2.4
+	google.golang.org/grpc v1.37.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
@@ -33,6 +35,4 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/genproto v0.0.0-20201106154455-f9bfe239b0ba // indirect
-	google.golang.org/grpc v1.37.0 // indirect
-	google.golang.org/protobuf v1.33.0 // indirect
 )
